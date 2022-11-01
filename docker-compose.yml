@@ -7,7 +7,26 @@ services:
     ports:
       - "8080:8080"
 
-  ms-generic-api:
+  googleapi:
     build:
       context: GenericApi
       dockerfile: DockerFile
+
+  yahooapi:
+    build:
+      context: GenericApi
+      dockerfile: DockerFile
+
+
+  facebookapi:
+    build:
+      context: GenericApi
+      dockerfile: DockerFile
+
+
+  appleapi:
+    build:
+      context: GenericApi
+      dockerfile: DockerFile
+
+

@@ -1,8 +1,8 @@
 package com.example.Auction.controller;
 
-
-import com.example.Auction.model.BidRequest;
-import com.example.Auction.model.BidResponse;
+import com.example.Auction.dto.BidRequestDto;
+import com.example.Auction.dto.BidResponseDto;
+import com.example.Auction.mapper.BidsMapper;
 import com.example.Auction.service.AuctionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,17 +25,18 @@ public class AuctionController {
     @Autowired
     private AuctionService auctionService;
 
+    @Autowired
+    private BidsMapper mapper;
+
     @PostMapping(value = "/request", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<BidResponse> auction(@RequestBody BidRequest bidRequest) {
-        log.info(" received and Bid Request With details : {}", bidRequest);
+    public ResponseEntity<BidResponseDto> auction(@RequestBody BidRequestDto bidRequestDto) {
+        log.info(" received and Bid Request With details : {}", bidRequestDto);
 
-        BidResponse bidResponse = auctionService.startBidsAuction(bidRequest);
+        BidResponseDto bidResponseDto = mapper.BidResponseToDto(auctionService.startAuction(mapper.DtoToBidRequest(bidRequestDto)));
 
-        return bidResponse == null ?
-                new ResponseEntity<>(new BidResponse(0.0,"no bid from company found ", Timestamp.from(Instant.now())), HttpStatus.NOT_FOUND) :
-                new ResponseEntity<>(bidResponse, HttpStatus.OK);
-
-
+        return bidResponseDto == null ?
+                new ResponseEntity<>(new BidResponseDto(0.0, "no bid from company found ", Timestamp.from(Instant.now())), HttpStatus.NOT_FOUND) :
+                new ResponseEntity<>(bidResponseDto, HttpStatus.OK);
 
     }
 
