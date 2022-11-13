@@ -18,15 +18,6 @@ services:
       dockerfile: DockerFile
 
 
-  facebookapi:
-    build:
-      context: GenericApi
-      dockerfile: DockerFile
 
-
-  appleapi:
-    build:
-      context: GenericApi
-      dockerfile: DockerFile
 
 

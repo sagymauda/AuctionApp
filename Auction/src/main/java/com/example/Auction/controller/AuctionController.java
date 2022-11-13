@@ -4,6 +4,7 @@ import com.example.Auction.dto.BidRequestDto;
 import com.example.Auction.dto.BidResponseDto;
 import com.example.Auction.mapper.BidsMapper;
 import com.example.Auction.service.AuctionService;
+import com.example.Auction.service.AuctionServiceDiffResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,8 @@ public class AuctionController {
 
     @Autowired
     private AuctionService auctionService;
+    @Autowired
+    private AuctionServiceDiffResponses auctionServiceDiffResponses;
 
     @Autowired
     private BidsMapper mapper;
@@ -32,11 +35,12 @@ public class AuctionController {
     public ResponseEntity<BidResponseDto> auction(@RequestBody BidRequestDto bidRequestDto) {
         log.info(" received and Bid Request With details : {}", bidRequestDto);
 
-        BidResponseDto bidResponseDto = mapper.BidResponseToDto(auctionService.startAuction(mapper.DtoToBidRequest(bidRequestDto)));
+        // BidResponseDto bidResponseDto = mapper.BidResponseToDto(auctionService.startAuction(mapper.DtoToBidRequest(bidRequestDto)));
+        Double answer = auctionServiceDiffResponses.startAuction(mapper.DtoToBidRequest(bidRequestDto));
 
-        return bidResponseDto == null ?
+        return answer == null ?
                 new ResponseEntity<>(new BidResponseDto(0.0, "no bid from company found ", Timestamp.from(Instant.now())), HttpStatus.NOT_FOUND) :
-                new ResponseEntity<>(bidResponseDto, HttpStatus.OK);
+                new ResponseEntity<>(new BidResponseDto(answer, "By Some Company", Timestamp.from(Instant.now())), HttpStatus.OK);
 
     }
 

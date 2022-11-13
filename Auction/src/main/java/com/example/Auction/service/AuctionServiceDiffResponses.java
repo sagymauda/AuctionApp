@@ -1,51 +1,57 @@
 package com.example.Auction.service;
 
 import com.example.Auction.model.BidRequest;
-import com.example.Auction.model.BidResponse;
 import com.example.Auction.model.BidStrategy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
 import static com.example.Auction.model.BidStrategy.FIRST_STRATEGY;
 
 @Slf4j
 @Service
-public class AuctionService {
+public class AuctionServiceDiffResponses {
+
     @Autowired
     private BidsService bidsService;
+    @Autowired
+    private DiffBidService diffBidService;
 
-    public BidResponse startAuction(BidRequest bidRequest) {
+    public Double startAuction(BidRequest bidRequest) {
 
-        List<BidResponse> bids = bidsService.getBids(bidRequest);
-        return chooseBidByStrategy(bidRequest.getBidStrategy(), bids);
+        List<Double> bidss = diffBidService.getBidsWithDifferentPayloads(bidRequest);
+
+        return chooseBidByStrategy(bidRequest.getBidStrategy(), bidss);
 
     }
 
-    private BidResponse chooseBidByStrategy(BidStrategy strategy, List<BidResponse> bidResponses) {
+    private Double chooseBidByStrategy(BidStrategy strategy, List<Double> bidResponses) {
 
         log.info("Going inside findBidByStrategy with list {}", bidResponses);
 
         if (bidResponses.size() == 0)
-            return new BidResponse(null, null, null);
+            return 0.0;
 
         if (bidResponses.size() == 1)
             return bidResponses.get(0);
 
-        List<BidResponse> sortedBidResponseList = bidResponses.stream()
-                .sorted(Collections.reverseOrder(Comparator.comparing(BidResponse::getBidValue)))
+        List<Double> sortedBidsList = bidResponses.stream()
+                .sorted(Collections.reverseOrder())
                 .collect(Collectors.toList());
 
-        BidResponse answer = Objects.equals(strategy, FIRST_STRATEGY) ?
-                sortedBidResponseList.get(0) :
-                sortedBidResponseList.get(1);
+        Double answer = Objects.equals(strategy, FIRST_STRATEGY) ?
+                sortedBidsList.get(0) :
+                sortedBidsList.get(1);
 
         log.info("what has been returned from the service to the controller is {}", answer);
         return answer;
 
     }
+
 }
+
+
