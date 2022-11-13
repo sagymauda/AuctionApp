@@ -1,0 +1,23 @@
+version: "3.9"
+services:
+  ms-auction:
+    build:
+      context: Auction
+      dockerfile: DockerFile
+    ports:
+      - "8080:8080"
+
+  googleapi:
+    build:
+      context: GenericApi
+      dockerfile: DockerFile
+
+  yahooapi:
+    build:
+      context: GenericApi
+      dockerfile: DockerFile
+
+
+
+
+
